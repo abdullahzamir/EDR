@@ -2,8 +2,8 @@
 #include "util.h"
 
 
-#define HAS_EXEC_PERMISSION(prot) (prot & 0xF0)
-#define HAS_READ_PERMISSION(prot) (prot  == 0x08 || prot == 0x80)
+#define HAS_EXEC_PERMISSION(prot) (prot & PAGE_EXECUTE)
+#define HAS_READ_PERMISSION(prot) (prot  == PAGE_READWRITE || prot == 0x80)
 #define HAS_WRITE_PERMISSION(prot) (prot & 0xCC)
 
 
@@ -39,9 +39,9 @@ std::vector<PROCESSENTRY32> Process::GetProcessList() {
 	}
 
 
-void Process::QueryProcess(DWORD pid) {
+void Process::QueryProcess(PROCESSENTRY32 pe) {
 	HANDLE hProcess;
-	hProcess = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, FALSE, pid);
+	hProcess = OpenProcess(MAXIMUM_ALLOWED, FALSE, pe.th32ProcessID);
 
 
 	// Query the process for name 
@@ -61,25 +61,32 @@ void Process::QueryProcess(DWORD pid) {
 	SIZE_T bytesRead;
 	SIZE_T bytesWritten;
 
-	DWORD prot = 0;
+	
 
 
 	if (VirtualQueryEx(hProcess, NULL, &memInfo, sizeof(memInfo)) == 0) {
 		ERROR("VirtualQueryEx");
 	}
+
 	else {
+		DEBUG("meminfo: %lx", memInfo.AllocationProtect);
 		DEBUG("%d" , HAS_READ_PERMISSION(memInfo.Protect));
-		if (HAS_EXEC_PERMISSION(memInfo.Protect)) {
+		if (HAS_EXEC_PERMISSION(memInfo.AllocationProtect)) {
 			DEBUG("Process has execute permission");
 		}
-		if (HAS_READ_PERMISSION(memInfo.Protect)) {
+		if (HAS_READ_PERMISSION(memInfo.AllocationProtect)) {
 			DEBUG("Process has read permission");
 		}
-		if (HAS_WRITE_PERMISSION(memInfo.Protect)) {
+		if (HAS_WRITE_PERMISSION(memInfo.AllocationProtect)) {
 			DEBUG("Process has write permission");
 		}
 
 	}
 
 
+}
+
+
+void Process::GetProcessCommandline(PROCESSENTRY32 pe) {
+	
 }

@@ -5,6 +5,7 @@ class Process {
 public:
 	Process();
 	~Process();
-	std::vector<PROCESSENTRY32> GetProcessList();
-	void QueryProcess(DWORD pid);
+	static std::vector<PROCESSENTRY32> GetProcessList();
+	void QueryProcess(PROCESSENTRY32);
+	void GetProcessCommandline(PROCESSENTRY32);
 };

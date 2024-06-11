@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <time.h>
 #include <vector>
+#include <winternl.h>
+
 
 #define ANSI_RED "\x1b[31m" 
 #define ANSI_GREEN "\x1b[32m" 
