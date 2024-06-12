@@ -89,4 +89,54 @@ void Process::QueryProcess(PROCESSENTRY32 pe) {
 
 void Process::GetProcessCommandline(PROCESSENTRY32 pe) {
 	
+	HANDLE hProcess;
+	hProcess = OpenProcess(MAXIMUM_ALLOWED, FALSE, pe.th32ProcessID);
+	if (hProcess == NULL) {
+		ERROR("OpenProcess");
+	}
+	
+	else {
+
+		HMODULE hNtdll = GetModuleHandle(L"ntdll.dll");
+
+		pNtQueryInformationProcess NtQueryInformationProcess = (pNtQueryInformationProcess)GetProcAddress(hNtdll, "NtQueryInformationProcess");
+
+		// Query the process for commandline
+		PROCESS_BASIC_INFORMATION pbi;
+		PEB peb;
+		ULONG ReturnLength;
+		NTSTATUS status;
+		status = NtQueryInformationProcess(hProcess, ProcessBasicInformation, &pbi, sizeof(pbi), &ReturnLength);
+		if (status != 0) {
+			ERROR("NtQueryInformationProcess");
+		}
+		else {
+			UNICODE_STRING commandLine;
+			PVOID rtlUserProcParamsAddress;
+			RTL_USER_PROCESS_PARAMETERS upp;
+			ReadProcessMemory(hProcess, pbi.PebBaseAddress, &peb, sizeof(PVOID), NULL);
+			ReadProcessMemory(hProcess, peb.ProcessParameters, &upp, sizeof(upp), NULL);	
+			
+			ReadProcessMemory(hProcess, upp.CommandLine.Buffer, &commandLine, sizeof(commandLine), NULL);
+			WCHAR* commandLineContents = (WCHAR*)malloc(commandLine.Length);
+			ReadProcessMemory(hProcess, commandLine.Buffer, commandLineContents, commandLine.Length, NULL);
+
+
+
+
+
+			CloseHandle(hProcess);
+
+			auto size = commandLine.Length;
+			char* chTemp = (char*)malloc(size);
+			//wcstombs(chTemp, commandLineContents, size);
+			WideCharToMultiByte(CP_ACP, 0, commandLineContents, -1, chTemp, size, 0, 0);
+			DEBUG("Commandline: %s", chTemp);
+		
+		}
+	}
+
+
 }
+
+

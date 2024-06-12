@@ -5,7 +5,7 @@
 #include <time.h>
 #include <vector>
 #include <winternl.h>
-
+#include "ntapi.h"
 
 #define ANSI_RED "\x1b[31m" 
 #define ANSI_GREEN "\x1b[32m" 
@@ -23,3 +23,4 @@
 	printf(ANSI_RESET); \
 	printf("\n"); \
 }
+

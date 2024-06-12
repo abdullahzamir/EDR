@@ -5,7 +5,7 @@ int main() {
 	Process process;
 	std::vector<PROCESSENTRY32> Snap;
 	Snap = Process::GetProcessList();
-	
+
 	DEBUG("Number of processes: %d", Snap.size());
 
 	while (true) {
@@ -18,6 +18,7 @@ int main() {
 			if (Snap[i].th32ProcessID != NewSnap[i].th32ProcessID) {
 				DEBUG("Process ID: %d, Process Name %ls", NewSnap[i].th32ProcessID, NewSnap[i].szExeFile);
 				process.QueryProcess(NewSnap[i]);
+				process.GetProcessCommandline(NewSnap[i]);
 				processChanged = true;
 				break;
 			}
