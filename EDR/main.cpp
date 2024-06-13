@@ -16,7 +16,7 @@ int main() {
 		
 		for (int i = 0; i < NewSnap.size() - 1; i++) {
 			if (Snap[i].th32ProcessID != NewSnap[i].th32ProcessID) {
-				DEBUG("PPID: %d PID: %d, Process Name %ls",NewSnap[i].th32ParentProcessID, NewSnap[i].th32ProcessID, NewSnap[i].szExeFile);
+				SUCCESS("PPID: %d PID: %d, Process Name %ls",NewSnap[i].th32ParentProcessID, NewSnap[i].th32ProcessID, NewSnap[i].szExeFile);
 				process.ProcessTimes(NewSnap[i]);
 				process.QueryProcess(NewSnap[i]);
 				process.GetProcessCommandline(NewSnap[i]);

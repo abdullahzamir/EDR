@@ -24,4 +24,9 @@
 	printf(ANSI_RESET); \
 	printf("\n"); \
 }
-
+#define SUCCESS(msg, ...){ \
+	printf(ANSI_GREEN); \
+	printf(msg, ##__VA_ARGS__); \
+	printf(ANSI_RESET); \
+	printf("\n"); \
+}

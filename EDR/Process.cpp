@@ -53,7 +53,7 @@ void Process::QueryProcess(PROCESSENTRY32 pe) {
 		TCHAR ProcessName[MAX_PATH];
 		DWORD ProcessNameLength = MAX_PATH;
 		QueryFullProcessImageName(hProcess, 0, ProcessName, &ProcessNameLength);
-		DEBUG("Process Name: %ls", ProcessName);
+		DEBUG("Executable Path: %ls", ProcessName);
 	}
 
 	// Query the process for memory permissions
@@ -69,8 +69,6 @@ void Process::QueryProcess(PROCESSENTRY32 pe) {
 	}
 
 	else {
-		DEBUG("meminfo: %lx", memInfo.AllocationProtect);
-		DEBUG("%d" , HAS_READ_PERMISSION(memInfo.Protect));
 		if (HAS_EXEC_PERMISSION(memInfo.AllocationProtect)) {
 			DEBUG("Process has execute permission");
 		}
@@ -123,7 +121,7 @@ void Process::GetProcessCommandline(PROCESSENTRY32 pe) {
 				}
 				else {
 					cmdline[dwLength / 2] = 0;
-					DEBUG("Commandline: %ls", cmdline);
+					SUCCESS("Commandline: %ls", cmdline);
 				}
 
 			}
@@ -159,7 +157,7 @@ void Process::ProcessTimes(PROCESSENTRY32 pe) {
 			li.HighPart = CreationTime.dwHighDateTime;
 			FileTimeToSystemTime(&CreationTime, &st);
 			
-			DEBUG("Creation Time: %d:%d:%d", st.wHour, st.wMinute, st.wSecond);
+			SUCCESS("Creation Time: %d:%d:%d", st.wHour, st.wMinute, st.wSecond);
 		}
 	}
 }
