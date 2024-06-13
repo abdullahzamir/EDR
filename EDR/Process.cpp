@@ -89,54 +89,79 @@ void Process::QueryProcess(PROCESSENTRY32 pe) {
 
 void Process::GetProcessCommandline(PROCESSENTRY32 pe) {
 	
+
+	HMODULE hNtdll = GetModuleHandle(L"ntdll.dll");
+
+	pNtQueryInformationProcess NtQueryInformationProcess = (pNtQueryInformationProcess)GetProcAddress(hNtdll, "NtQueryInformationProcess");
+
 	HANDLE hProcess;
-	hProcess = OpenProcess(MAXIMUM_ALLOWED, FALSE, pe.th32ProcessID);
+	hProcess = OpenProcess(PROCESS_VM_READ | PROCESS_QUERY_INFORMATION, FALSE, pe.th32ProcessID);
 	if (hProcess == NULL) {
 		ERROR("OpenProcess");
 	}
 	
 	else {
-
-		HMODULE hNtdll = GetModuleHandle(L"ntdll.dll");
-
-		pNtQueryInformationProcess NtQueryInformationProcess = (pNtQueryInformationProcess)GetProcAddress(hNtdll, "NtQueryInformationProcess");
-
-		// Query the process for commandline
 		PROCESS_BASIC_INFORMATION pbi;
-		PEB peb;
 		ULONG ReturnLength;
 		NTSTATUS status;
 		status = NtQueryInformationProcess(hProcess, ProcessBasicInformation, &pbi, sizeof(pbi), &ReturnLength);
-		if (status != 0) {
-			ERROR("NtQueryInformationProcess");
+		PEB peb;
+		if (!ReadProcessMemory(hProcess, pbi.PebBaseAddress, &peb, sizeof(peb), NULL)) {
+			ERROR("%s", GetLastError());
 		}
 		else {
-			UNICODE_STRING commandLine;
-			PVOID rtlUserProcParamsAddress;
 			RTL_USER_PROCESS_PARAMETERS upp;
-			ReadProcessMemory(hProcess, pbi.PebBaseAddress, &peb, sizeof(PVOID), NULL);
-			ReadProcessMemory(hProcess, peb.ProcessParameters, &upp, sizeof(upp), NULL);	
-			
-			ReadProcessMemory(hProcess, upp.CommandLine.Buffer, &commandLine, sizeof(commandLine), NULL);
-			WCHAR* commandLineContents = (WCHAR*)malloc(commandLine.Length);
-			ReadProcessMemory(hProcess, commandLine.Buffer, commandLineContents, commandLine.Length, NULL);
+			if (!ReadProcessMemory(hProcess, peb.ProcessParameters, &upp, sizeof(upp), NULL)) {
+				ERROR("%s", GetLastError());
+			}
+			else {
 
+				DWORD dwLength = upp.CommandLine.Length;
+				auto cmdline = new WCHAR[dwLength / 2 + 1];
+				if (!ReadProcessMemory(hProcess, upp.CommandLine.Buffer, cmdline, dwLength, NULL)) {
+					ERROR("%s", GetLastError());
+				}
+				else {
+					cmdline[dwLength / 2] = 0;
+					DEBUG("Commandline: %ls", cmdline);
+				}
 
+			}
 
-
-
-			CloseHandle(hProcess);
-
-			auto size = commandLine.Length;
-			char* chTemp = (char*)malloc(size);
-			//wcstombs(chTemp, commandLineContents, size);
-			WideCharToMultiByte(CP_ACP, 0, commandLineContents, -1, chTemp, size, 0, 0);
-			DEBUG("Commandline: %s", chTemp);
-		
 		}
+
+		
 	}
 
 
+}
+
+void Process::ProcessTimes(PROCESSENTRY32 pe) {
+	HANDLE hProcess;
+	hProcess = OpenProcess(PROCESS_QUERY_INFORMATION, FALSE, pe.th32ProcessID);
+	if (hProcess == NULL) {
+		ERROR("OpenProcess");
+	}
+	else {
+		FILETIME CreationTime;
+		FILETIME ExitTime;
+		FILETIME KernelTime;
+		FILETIME UserTime;
+		if (!GetProcessTimes(hProcess, &CreationTime, &ExitTime, &KernelTime, &UserTime)) {
+			ERROR("GetProcessTimes");
+		}
+		else {
+			// Convert FILETIME to time_t
+			SYSTEMTIME st;
+			FILETIME ft;
+			LARGE_INTEGER li;
+			li.LowPart = CreationTime.dwLowDateTime;
+			li.HighPart = CreationTime.dwHighDateTime;
+			FileTimeToSystemTime(&CreationTime, &st);
+			
+			DEBUG("Creation Time: %d:%d:%d", st.wHour, st.wMinute, st.wSecond);
+		}
+	}
 }
 
 

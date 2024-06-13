@@ -8,4 +8,5 @@ public:
 	static std::vector<PROCESSENTRY32> GetProcessList();
 	void QueryProcess(PROCESSENTRY32);
 	void GetProcessCommandline(PROCESSENTRY32);
+	void ProcessTimes(PROCESSENTRY32);
 };
