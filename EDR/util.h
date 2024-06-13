@@ -6,6 +6,7 @@
 #include <vector>
 #include <winternl.h>
 #include "ntapi.h"
+#include <iostream>
 
 
 #define ANSI_RED "\x1b[31m" 

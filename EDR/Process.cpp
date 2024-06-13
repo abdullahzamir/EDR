@@ -56,32 +56,25 @@ void Process::QueryProcess(PROCESSENTRY32 pe) {
 		DEBUG("Executable Path: %ls", ProcessName);
 	}
 
-	// Query the process for memory permissions
-	MEMORY_BASIC_INFORMATION memInfo;
-	SIZE_T bytesRead;
-	SIZE_T bytesWritten;
-
+	MEMORY_BASIC_INFORMATION mbi = {};
+	LPVOID offset = 0;
+	HANDLE process = NULL;
+		process = OpenProcess(MAXIMUM_ALLOWED, false, pe.th32ProcessID);
+		if (process)
+		{
+			std::wcout << pe.szExeFile << "\n";
+			while (VirtualQueryEx(process, offset, &mbi, sizeof(mbi)))
+			{
+				offset = (LPVOID)((DWORD_PTR)mbi.BaseAddress + mbi.RegionSize);
+				if (mbi.AllocationProtect == PAGE_EXECUTE_READWRITE && mbi.State == MEM_COMMIT && mbi.Type == MEM_PRIVATE)
+				{
+					std::cout << "\tRWX: 0x" << std::hex << mbi.BaseAddress << "\n";
+				}
+			}
+			offset = 0;
+		}
+		CloseHandle(process);
 	
-
-
-	if (VirtualQueryEx(hProcess, NULL, &memInfo, sizeof(memInfo)) == 0) {
-		ERROR("VirtualQueryEx");
-	}
-
-	else {
-		if (HAS_EXEC_PERMISSION(memInfo.AllocationProtect)) {
-			DEBUG("Process has execute permission");
-		}
-		if (HAS_READ_PERMISSION(memInfo.AllocationProtect)) {
-			DEBUG("Process has read permission");
-		}
-		if (HAS_WRITE_PERMISSION(memInfo.AllocationProtect)) {
-			DEBUG("Process has write permission");
-		}
-
-	}
-
-
 }
 
 
