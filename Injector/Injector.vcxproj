@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{5a6076fd-06ce-49e6-afb7-1677315e5809}</ProjectGuid>
-    <RootNamespace>EDR</RootNamespace>
+    <ProjectGuid>{5055ce0b-2bb2-41c7-b616-e72242e430e7}</ProjectGuid>
+    <RootNamespace>Injector</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -127,14 +127,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Hooking.h" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="Process.cpp" />
-    <ClCompile Include="Process.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="ntapi.h" />
-    <ClInclude Include="util.h" />
+    <ClCompile Include="Injector.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

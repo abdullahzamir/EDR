@@ -26,11 +26,10 @@ int main()
 				{
 					std::cout << "\tRWX: 0x" << std::hex << mbi.BaseAddress << "\n";
 				}
-			}
+}
 			offset = 0;
 		}
 		CloseHandle(process);
 	}
 
-	return 0;
 }
