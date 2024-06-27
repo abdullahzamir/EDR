@@ -59,6 +59,7 @@ void Process::QueryProcess(PROCESSENTRY32 pe) {
 	MEMORY_BASIC_INFORMATION mbi = {};
 	LPVOID offset = 0;
 	HANDLE process = NULL;
+	uint8_t buffer[16] = { 0 };
 		process = OpenProcess(MAXIMUM_ALLOWED, false, pe.th32ProcessID);
 		if (process)
 		{
@@ -69,8 +70,14 @@ void Process::QueryProcess(PROCESSENTRY32 pe) {
 				if (mbi.AllocationProtect == PAGE_EXECUTE_READWRITE && mbi.State == MEM_COMMIT && mbi.Type == MEM_PRIVATE)
 				{
 					std::cout << "\tRWX: 0x" << std::hex << mbi.BaseAddress << "\n";
+					ReadProcessMemory(process, mbi.BaseAddress, buffer, 16, NULL);
+					std::cout << "\t\tData: ";
+					for (int i = 0; i < 16; i++)
+					{
+						std::cout << std::hex << (int)buffer[i] << " ";
+					}
+					std::cout << std::endl;
 				}
-			}
 			offset = 0;
 		}
 		CloseHandle(process);
