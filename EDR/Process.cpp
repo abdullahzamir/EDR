@@ -78,6 +78,7 @@ void Process::QueryProcess(PROCESSENTRY32 pe) {
 					}
 					std::cout << std::endl;
 				}
+			}
 			offset = 0;
 		}
 		CloseHandle(process);

@@ -127,12 +127,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ETW.cpp" />
     <ClCompile Include="Injector.h" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Process.cpp" />
     <ClCompile Include="Process.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ETW.h" />
     <ClInclude Include="ntapi.h" />
     <ClInclude Include="util.h" />
   </ItemGroup>

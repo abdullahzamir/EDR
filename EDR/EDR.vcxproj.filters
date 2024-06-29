@@ -27,12 +27,18 @@
     <ClCompile Include="Injector.h">
       <Filter>Header Files</Filter>
     </ClCompile>
+    <ClCompile Include="ETW.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="util.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ntapi.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ETW.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

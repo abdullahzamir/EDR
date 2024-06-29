@@ -7,7 +7,8 @@
 #include <winternl.h>
 #include "ntapi.h"
 #include <iostream>
-
+#include <evntprov.h>
+#include <evntrace.h>
 
 #define ANSI_RED "\x1b[31m" 
 #define ANSI_GREEN "\x1b[32m" 
